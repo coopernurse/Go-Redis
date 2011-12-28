@@ -15,8 +15,8 @@
 package redis
 
 import (
-	"time"
 	"log"
+	"time"
 )
 
 // ----------------------------------------------------------------------------
@@ -308,7 +308,6 @@ func (fvc _futurefloat64) TryGet(ns int64) (v float64, error Error, ok bool) {
 	return v, nil, ok
 }
 
-
 // ------------------
 // FutureKeys
 //
@@ -444,14 +443,10 @@ func NewTimer(ns int64) (signal <-chan int64) {
 	}
 	c := make(chan int64)
 	go func() {
-		t := time.Nanoseconds()
-		e := time.Sleep(ns)
-		if e != nil {
-			t = 0 - (time.Nanoseconds() - t)
-		} else {
-			t = time.Nanoseconds() - t
-		}
-		c <- t
+		t := time.Now()
+		time.Sleep(time.Duration(ns))
+		d := time.Now().Sub(t)
+		c <- int64(d)
 	}()
 	return c
 }

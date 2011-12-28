@@ -19,11 +19,11 @@
 package redis
 
 import (
-	"strings"
 	"bytes"
 	"fmt"
-	"strconv"
 	"log"
+	"strconv"
+	"strings"
 )
 
 // -----------------------------------------------------------------------------
@@ -263,7 +263,6 @@ func (c *syncClient) Mget(arg0 string, arg1 []string) (result [][]byte, err Erro
 
 }
 
-
 // Redis INCR command.
 func (c *syncClient) Incr(arg0 string) (result int64, err Error) {
 	arg0bytes := []byte(arg0)
@@ -422,12 +421,11 @@ func (c *syncClient) Lset(arg0 string, arg1 int64, arg2 []byte) (err Error) {
 	return
 }
 
-
 // Redis LREM command.
 func (c *syncClient) Lrem(key string, value []byte, count int64) (result int64, err Error) {
 	arg0bytes := []byte(key)
 	arg1bytes := value
-	arg2bytes := []byte(strconv.Itoa64(count))
+	arg2bytes := []byte(strconv.FormatInt(count, 10))
 
 	var resp Response
 	resp, err = c.conn.ServiceRequest(&LREM, [][]byte{arg0bytes, arg1bytes, arg2bytes})
@@ -454,8 +452,8 @@ func (c *syncClient) Llen(arg0 string) (result int64, err Error) {
 // Redis LRANGE command.
 func (c *syncClient) Lrange(arg0 string, arg1 int64, arg2 int64) (result [][]byte, err Error) {
 	arg0bytes := []byte(arg0)
-	arg1bytes := []byte(strconv.Itoa64(arg1))
-	arg2bytes := []byte(strconv.Itoa64(arg2))
+	arg1bytes := []byte(strconv.FormatInt(arg1, 10))
+	arg2bytes := []byte(strconv.FormatInt(arg2, 10))
 
 	var resp Response
 	resp, err = c.conn.ServiceRequest(&LRANGE, [][]byte{arg0bytes, arg1bytes, arg2bytes})
@@ -544,7 +542,6 @@ func (c *syncClient) Sadd(arg0 string, arg1 []byte) (result bool, err Error) {
 
 }
 
-
 // Redis SREM command.
 func (c *syncClient) Srem(arg0 string, arg1 []byte) (result bool, err Error) {
 	arg0bytes := []byte(arg0)
@@ -558,7 +555,6 @@ func (c *syncClient) Srem(arg0 string, arg1 []byte) (result bool, err Error) {
 	return result, err
 
 }
-
 
 // Redis SISMEMBER command.
 func (c *syncClient) Sismember(arg0 string, arg1 []byte) (result bool, err Error) {
@@ -768,7 +764,7 @@ func (c *syncClient) Zscore(arg0 string, arg1 []byte) (result float64, err Error
 }
 
 func Btof64(buff []byte) (num float64, e Error) {
-	num, ce := strconv.Atof64(bytes.NewBuffer(buff).String())
+	num, ce := strconv.ParseFloat(bytes.NewBuffer(buff).String(), 64)
 	if ce != nil {
 		e = NewErrorWithCause(SYSTEM_ERR, "Expected a parsable byte representation of a float64", ce)
 	}
